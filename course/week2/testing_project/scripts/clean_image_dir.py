@@ -40,7 +40,7 @@ def clean_photo_image(path, out_dir):
   2. The photo is thresholded to increase contrast between black and white portions.
   3. The photo is cropped to remove any rows or columns of pixels that are 
     completely black.
-  4. The crop is reshaped to 20 x 20 pixels and cented in a 28 x 28 pixe 
+  4. The crop is reshaped to 20 x 20 pixels and centered in a 28 x 28 pixel 
     box by center of mass. 
 
   Steps 3-4 are important for normalizing the size of the digit; otherwise you 
