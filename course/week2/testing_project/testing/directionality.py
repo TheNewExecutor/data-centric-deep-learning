@@ -146,7 +146,7 @@ class MNISTDirectionalityTest(BaseTest):
       preds_raw = torch.argmax(logits_raw, dim=1)
       preds_transformed = torch.argmax(logits_transformed, dim=1)
 
-      batch_metric = 0  # store metric here
+      batch_metric = (preds_raw == preds_transformed).numpy().mean()
       # ================================
       # FILL ME OUT
       # 
@@ -165,8 +165,7 @@ class MNISTDirectionalityTest(BaseTest):
       # Type:
       # --
       # batch_metric: float (not torch.Tensor!)
-      #   Metric computed on a minibatch
-      pass  # remove me
+      #   Metric computed on a minibatch      
       # ================================
       metric.append(batch_metric)
       pbar.update()
