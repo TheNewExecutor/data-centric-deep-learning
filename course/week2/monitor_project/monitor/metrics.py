@@ -85,7 +85,9 @@ def get_hist_score(tr_probs, te_probs, bins=10):
 
 
 def get_vocab_outlier(tr_vocab, te_vocab):
-  score = None
+  num_seen = sum([te_vocab[word] for word in te_vocab if tr_vocab[word] == 0])
+  num_total = sum(te_vocab.values())
+  score = 1 - (num_seen / num_total)
   # ============================
   # FILL ME OUT
   # 
@@ -108,7 +110,6 @@ def get_vocab_outlier(tr_vocab, te_vocab):
   # te_vocab: dict[str, int]
   #   Map from word to count for test examples
   # score: float (between 0 and 1)
-  pass  # remove me
   # ============================
   return score
 
