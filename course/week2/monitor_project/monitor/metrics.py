@@ -5,7 +5,9 @@ from sklearn.isotonic import IsotonicRegression
 
 
 def get_ks_score(tr_probs, te_probs):
-  score = None
+  tr = tr_probs.tonumpy()
+  te = te_probs.tonumpy()
+  score = ks_2samp(tr, te).pvalue
   # ============================
   # FILL ME OUT
   # 
@@ -25,13 +27,23 @@ def get_ks_score(tr_probs, te_probs):
   # te_probs: torch.Tensor
   #   predicted probabilities from test test
   # score: float - between 0 and 1
-  pass  # remove me
+  
   # ============================
   return score
 
 
 def get_hist_score(tr_probs, te_probs, bins=10):
-  score = None
+  tr_heights, bin_edges =  np.histogram(tr_probs.tonumpy(), bins=bins, density=True)
+  te_heights, _ = np.histogram(te_probs, bins=bin_edges, density=True)
+  score = 0
+  for idx, bin_end in enumerate(bin_edges):
+    if idx > 0:
+      bin_diff = bin_edges[idx] - bin_edges[idx - 1]
+      tr_area = bin_diff * tr_heights[idx]
+      te_area = bin_diff * te_heights[idx]
+      intersect = min(tr_area, te_area)
+      score += intersect
+
   # ============================
   # FILL ME OUT
   # 
@@ -68,7 +80,6 @@ def get_hist_score(tr_probs, te_probs, bins=10):
   # 
   # Read the documentation for `np.histogram` carefully, in
   # particular what `bin_edges` represent.
-  pass  # remove me
   # ============================
   return score
 
