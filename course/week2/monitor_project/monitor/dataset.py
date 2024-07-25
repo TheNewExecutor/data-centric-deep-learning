@@ -32,6 +32,14 @@ class ProductReviewEmbeddings(Dataset):
 
   def get_vocab(self):
     vocab = defaultdict(lambda: 0)
+    s = (self.data.review
+          .str.lower()
+          .str.split())
+    for array in s:
+      for word in array:
+        vocab[word] += 1
+
+
     # ===============================
     # FILL ME OUT
     # 
@@ -51,7 +59,6 @@ class ProductReviewEmbeddings(Dataset):
     # Notes:
     # --
     # Convert tokens to lowercase when updating vocab.
-    pass  # remove me
     # ===============================
     return dict(vocab)
 
@@ -96,7 +103,14 @@ class ProductReviewStream(Dataset):
   def get_vocab(self):
     # `defaultdict` can be a helpful utility
     vocab = defaultdict(lambda: 0)
-    # ===============================
+    s = (self.data.review
+          .str.lower()
+          .str.split())
+    for array in s:
+      for word in array:
+        vocab[word] += 1
+
+# ===============================
     # FILL ME OUT
     # 
     # Copy your implementation of `get_vocab` from 
@@ -111,7 +125,6 @@ class ProductReviewStream(Dataset):
     # Type:
     # --
     # vocab: dict[str, int]
-    pass  # remove me
     # ===============================
     return dict(vocab)
 

@@ -5,8 +5,8 @@ from sklearn.isotonic import IsotonicRegression
 
 
 def get_ks_score(tr_probs, te_probs):
-  tr = tr_probs.tonumpy()
-  te = te_probs.tonumpy()
+  tr = tr_probs.numpy()
+  te = te_probs.numpy()
   score = ks_2samp(tr, te).pvalue
   # ============================
   # FILL ME OUT
@@ -33,14 +33,15 @@ def get_ks_score(tr_probs, te_probs):
 
 
 def get_hist_score(tr_probs, te_probs, bins=10):
-  tr_heights, bin_edges =  np.histogram(tr_probs.tonumpy(), bins=bins, density=True)
+  tr_heights, bin_edges =  np.histogram(tr_probs.numpy(), bins=bins, density=True)
   te_heights, _ = np.histogram(te_probs, bins=bin_edges, density=True)
   score = 0
   for idx, bin_end in enumerate(bin_edges):
     if idx > 0:
       bin_diff = bin_edges[idx] - bin_edges[idx - 1]
-      tr_area = bin_diff * tr_heights[idx]
-      te_area = bin_diff * te_heights[idx]
+      # bin heights are offest from edges
+      tr_area = bin_diff * tr_heights[idx - 1]
+      te_area = bin_diff * te_heights[idx - 1]
       intersect = min(tr_area, te_area)
       score += intersect
 
@@ -85,9 +86,9 @@ def get_hist_score(tr_probs, te_probs, bins=10):
 
 
 def get_vocab_outlier(tr_vocab, te_vocab):
-  num_seen = sum([te_vocab[word] for word in te_vocab if tr_vocab[word] == 0])
+  num_seen = sum(te_vocab[word] for word in te_vocab if word not in tr_vocab)
   num_total = sum(te_vocab.values())
-  score = 1 - (num_seen / num_total)
+  score = 1 - (num_seen / num_total) 
   # ============================
   # FILL ME OUT
   # 
@@ -122,8 +123,10 @@ class MonitoringSystem:
     self.tr_labels = tr_labels
 
   def calibrate(self, tr_probs, tr_labels, te_probs):
-    tr_probs_cal = None
-    te_probs_cal = None
+    regressor = IsotonicRegression(out_of_bounds='clip')
+    regressor.fit(tr_probs.numpy(), tr_labels.numpy())
+    tr_probs_cal = torch.from_numpy(regressor.predict(tr_probs.numpy()))
+    te_probs_cal = torch.from_numpy(regressor.predict(te_probs.numpy()))
     # ============================
     # FILL ME OUT
     # 
@@ -144,7 +147,6 @@ class MonitoringSystem:
     # it to a torch.Tensor.
     # 
     # `te_probs_cal`: torch.Tensor
-    pass  # remove me
     # ============================
     return tr_probs_cal, te_probs_cal
 
