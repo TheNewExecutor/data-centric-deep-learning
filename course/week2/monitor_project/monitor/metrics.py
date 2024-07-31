@@ -44,7 +44,6 @@ def get_hist_score(tr_probs, te_probs, bins=10):
       te_area = bin_diff * te_heights[idx - 1]
       intersect = min(tr_area, te_area)
       score += intersect
-
   # ============================
   # FILL ME OUT
   # 
@@ -86,8 +85,8 @@ def get_hist_score(tr_probs, te_probs, bins=10):
 
 
 def get_vocab_outlier(tr_vocab, te_vocab):
-  num_seen = sum(te_vocab[word] for word in te_vocab if word not in tr_vocab)
-  num_total = sum(te_vocab.values())
+  num_seen = sum(1 for word in te_vocab if word not in tr_vocab)
+  num_total = len(te_vocab)
   score = 1 - (num_seen / num_total) 
   # ============================
   # FILL ME OUT
