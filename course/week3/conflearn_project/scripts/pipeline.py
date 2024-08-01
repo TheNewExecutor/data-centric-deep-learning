@@ -174,14 +174,13 @@ class TrainIdentifyReview(FlowSpec):
                                     batch_size=batch_size)
       test_dataloader = DataLoader(test_dataset,
                                    batch_size=batch_size)
-      self.trainer.fit(model=self.system,
+      system = SentimentClassifierSystem(self.config)
+      self.trainer.fit(model=system,
                        train_dataloaders=train_dataloader)
-      probs_ = self.trainer.predict(model=self.system,
+      probs_ = self.trainer.predict(model=system,
                            dataloaders=test_dataloader
                            ).numpy()
                                 
-
-
 
       assert probs_ is not None, "`probs_` is not defined."
       probs[test_index] = probs_
