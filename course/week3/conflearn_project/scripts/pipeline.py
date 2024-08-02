@@ -177,11 +177,11 @@ class TrainIdentifyReview(FlowSpec):
       system = SentimentClassifierSystem(self.config)
       self.trainer.fit(model=system,
                        train_dataloaders=train_dataloader)
-      probs_ = self.trainer.predict(model=system,
+      batch = self.trainer.predict(model=system,
                            dataloaders=test_dataloader
-                           ).numpy()
-                                
-
+                           )
+            
+      probs_ = torch.cat(batch).squeeze().numpy()
       assert probs_ is not None, "`probs_` is not defined."
       probs[test_index] = probs_
 
