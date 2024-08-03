@@ -228,7 +228,8 @@ class TrainIdentifyReview(FlowSpec):
     # TODO
     # =============================
     ranked_label_issues = find_label_issues(labels=self.all_df.label,
-                                            pred_probs=prob)
+                                            pred_probs=prob,
+                                            return_indices_ranked_by='confidence_weighted_entropy')
     assert ranked_label_issues is not None, "`ranked_label_issues` not defined."
 
     # save this to class
