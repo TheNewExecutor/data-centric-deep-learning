@@ -164,10 +164,10 @@ class TrainIdentifyReview(FlowSpec):
       # probs_: np.array[float] (shape: |test set|)
       # TODO
       # ===============================================
-      x_train = torch.from_numpy(X[train_index])
-      x_test = torch.from_numpy(X[test_index])
-      y_train = torch.from_numpy(y[train_index])
-      y_test = torch.from_numpy(y[test_index])
+      x_train = torch.from_numpy(X[train_index]).float()
+      x_test = torch.from_numpy(X[test_index]).float()
+      y_train = torch.from_numpy(y[train_index]).long()
+      y_test = torch.from_numpy(y[test_index]).long()
       train_dataset = TensorDataset(x_train, y_train)
       test_dataset = TensorDataset(x_test, y_test)
       train_dataloader = DataLoader(dataset=train_dataset,
@@ -175,13 +175,16 @@ class TrainIdentifyReview(FlowSpec):
       test_dataloader = DataLoader(test_dataset,
                                    batch_size=batch_size)
       system = SentimentClassifierSystem(self.config)
-      self.trainer.fit(model=system,
+      trainer = Trainer(
+        max_epochs=self.config.train.optimizer.max_epochs
+      )
+      trainer.fit(model=system,
                        train_dataloaders=train_dataloader)
       batch = self.trainer.predict(model=system,
                            dataloaders=test_dataloader
                            )
             
-      probs_ = torch.cat(batch).squeeze().numpy()
+      probs_ = torch.cat(batch).squeeze(1).numpy()
       assert probs_ is not None, "`probs_` is not defined."
       probs[test_index] = probs_
 
@@ -327,6 +330,7 @@ class TrainIdentifyReview(FlowSpec):
     # dm.test_dataset.data = test slice of self.all_df
     # TODO
     # # ====================================
+    
     # Order of concatenation is train, dev, test
     
     dm.train_dataset.data = self.all_df.loc[:train_size - 1]
