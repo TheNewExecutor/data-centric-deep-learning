@@ -227,7 +227,7 @@ class TrainIdentifyReview(FlowSpec):
     # ranked_label_issues: List[int]
     # TODO
     # =============================
-    ranked_label_issues = find_label_issues(labels=self.all_df.labels,
+    ranked_label_issues = find_label_issues(labels=self.all_df.label,
                                             pred_probs=prob)
     assert ranked_label_issues is not None, "`ranked_label_issues` not defined."
 
