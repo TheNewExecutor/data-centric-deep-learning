@@ -312,7 +312,7 @@ class TrainIdentifyReview(FlowSpec):
     dm = ReviewDataModule(self.config)
     train_size = len(dm.train_dataset)
     dev_size = len(dm.dev_dataset)
-
+    
     # ====================================
     # FILL ME OUT
     # 
@@ -327,8 +327,10 @@ class TrainIdentifyReview(FlowSpec):
     # dm.test_dataset.data = test slice of self.all_df
     # TODO
     # # ====================================
-    dm.train_dataset.data = self.all_df.loc[:train_size]
-    dm.dev_dataset.data = self.all_df.loc[train_size:train_size + dev_size]
+    # Order of concatenation is train, dev, test
+    
+    dm.train_dataset.data = self.all_df.loc[:train_size - 1]
+    dm.dev_dataset.data = self.all_df.loc[train_size:train_size + dev_size - 1]
     dm.test_dataset.data = self.all_df.loc[train_size + dev_size:]
 
     # start from scratch
