@@ -8,6 +8,6 @@ This project will implement confidence learning to identify elements for relabel
 
 
 ## Confident Learning Results
-MODEL W/O CONFIDENT LEARNING  : 88.3%
-MODEL WITH CONFIDENT LEARNING : 49.9%
+MODEL W/O CONFIDENT LEARNING  : 87.2%
+MODEL WITH CONFIDENT LEARNING : 92.3%
 
