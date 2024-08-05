@@ -21,6 +21,8 @@ def random_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]:
   # HINT: when you randomly sample, do not choose duplicates.
   # HINT: please ensure indices is a list of integers
   # ================================
+  choices = np.arange(len(pred_probs))
+  indices = np.random.choice(choices, size=budget, replace=False)
   return indices
 
 def uncertainty_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]:
@@ -39,6 +41,14 @@ def uncertainty_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[
   # Take the first 1000.
   # HINT: please ensure indices is a list of integers
   # ================================
+  
+  # Assumes n by N tensor for chance_prob
+  max_probs = torch.max(pred_probs, dim=1).values
+  indices = (torch.sort(max_probs)
+             .indices[:budget]
+             .tolist()
+             )
+
   return indices
 
 def margin_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]:
@@ -53,6 +63,13 @@ def margin_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]:
   # Sort indices by the different in predicted probabilities in the top two classes per example.
   # Take the first 1000.
   # ================================
+  sorted_probs = torch.sort(pred_probs, dim=1, descending=True).values
+  margins = sorted_probs[:, 0] - sorted_probs[:, 1]
+  indices = (torch.sort(margins, descending=True)
+             .indices[:budget]
+             .tolist()
+             )
+
   return indices
 
 def entropy_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]:
@@ -71,4 +88,9 @@ def entropy_sampling(pred_probs: torch.Tensor, budget : int = 1000) -> List[int]
   # Take the first 1000.
   # HINT: Add epsilon when taking a log for entropy computation
   # ================================
+  entropies = (-pred_probs * torch.log(pred_probs + epsilon)).sum(1)
+  indices = (torch.sort(entropies, descending=True)
+             .indices[:budget]
+             .tolist()
+             )
   return indices
